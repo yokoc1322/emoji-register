@@ -1,18 +1,36 @@
 import emojilib
 
+_DEFAULT_FONT_FILE = 'fonts/NotoSansCJKjp-hinted/NotoSansCJKjp-Bold.otf'
 
-def main():
+
+def generate(
+    text='',
+    typeface_file=_DEFAULT_FONT_FILE,
+    width=128,
+    height=128,
+    align='center',
+    color=None,
+    background_color=None,
+    size_fixed=None,
+    disable_stretch=None
+):
+    generate_options = {}
+    if color:
+        generate_options['color'] = color
+    if background_color:
+        generate_options['background_color'] = background_color
+    if size_fixed:
+        generate_options['size_fixed'] = size_fixed
+    if disable_stretch:
+        generate_options['disable_stretch'] = disable_stretch
+
     data = emojilib.generate(
-        text='絵文\n字',
+        text=text,
         # typeface_name='游ゴシック体',
-        typeface_file='fonts/NotoSansCJKjp-hinted/NotoSansCJKjp-Bold.otf',
-        width=128,
-        height=128,
-        # color='#FF00FFFF',
-        # background_color='#00FF00FF',
-        # align='left',  # left, center or right
-        # size_fixed=True,
-        # disable_stretch=False,
+        typeface_file=typeface_file,
+        width=width,
+        height=height,
+        **generate_options,
         # format='PNG',  # PING or WEBP
     )
 
@@ -21,4 +39,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    generate('絵文\n字')
