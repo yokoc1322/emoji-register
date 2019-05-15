@@ -26,7 +26,7 @@ def generate(
     typeface_file=_DEFAULT_FONT_FILE,
     width=128,
     height=128,
-    align='center',
+    align='left',
     color=None,
     background_color=None,
     size_fixed=None,
@@ -48,6 +48,7 @@ def generate(
         typeface_file=typeface_file,
         width=width,
         height=height,
+        align=align,
         **generate_options,
         # format='PNG',  # PING or WEBP
     )
