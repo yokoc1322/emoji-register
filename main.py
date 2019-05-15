@@ -1,4 +1,6 @@
+from slack_emojinator.upload import upload_main
 import emojilib
+import pathlib
 
 _DEFAULT_FONT_FILE = 'fonts/NotoSansCJKjp-hinted/NotoSansCJKjp-Bold.otf'
 
@@ -39,4 +41,5 @@ def generate(
 
 
 if __name__ == '__main__':
-    generate('絵文\n字')
+    # generate('絵文\n字')
+    upload_main(pathlib.Path('../emoji.png').resolve())
