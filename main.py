@@ -1,8 +1,24 @@
 from slack_emojinator.upload import upload_main
 import emojilib
 import pathlib
+import random
 
 _DEFAULT_FONT_FILE = 'fonts/NotoSansCJKjp-hinted/NotoSansCJKjp-Bold.otf'
+
+
+def _create_random_color():
+    COLOR_TABLE = ['00', '88', 'FF']
+    TABLE_LENGTH = len(COLOR_TABLE)
+    RAND_MAX = 100
+
+    # 一定上の濃さになるまで回す
+    sum = 0
+    while sum < 2:
+        red = random.randrange(0, RAND_MAX) % TABLE_LENGTH
+        blue = random.randrange(0, RAND_MAX) % TABLE_LENGTH
+        green = random.randrange(0, RAND_MAX) % TABLE_LENGTH
+        sum = red + blue + green
+    return COLOR_TABLE[red] + COLOR_TABLE[blue] + COLOR_TABLE[green] + 'FF'
 
 
 def generate(
@@ -41,5 +57,6 @@ def generate(
 
 
 if __name__ == '__main__':
-    # generate('絵文\n字')
-    upload_main(pathlib.Path('../emoji.png').resolve())
+    color = _create_random_color()
+    generate('絵文\n字', color=color)
+    # upload_main(pathlib.Path('./emoji.png').resolve())
