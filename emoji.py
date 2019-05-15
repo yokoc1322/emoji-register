@@ -7,13 +7,13 @@ _DEFAULT_FONT_FILE = 'fonts/NotoSansCJKjp-hinted/NotoSansCJKjp-Bold.otf'
 
 
 def _create_random_color():
-    COLOR_TABLE = ['00', '88', 'FF']
+    COLOR_TABLE = ['FF', '88', '00']
     TABLE_LENGTH = len(COLOR_TABLE)
     RAND_MAX = 100
 
     # 一定上の濃さになるまで回す
     sum = 0
-    while sum < 2:
+    while sum < 1:
         red = random.randrange(0, RAND_MAX) % TABLE_LENGTH
         blue = random.randrange(0, RAND_MAX) % TABLE_LENGTH
         green = random.randrange(0, RAND_MAX) % TABLE_LENGTH
@@ -22,7 +22,8 @@ def _create_random_color():
 
 
 def generate(
-    text='',
+    text,
+    filename,
     typeface_file=_DEFAULT_FONT_FILE,
     width=128,
     height=128,
@@ -53,11 +54,11 @@ def generate(
         # format='PNG',  # PING or WEBP
     )
 
-    with open('emoji.png', 'wb') as f:
+    with open(filename, 'wb') as f:
         f.write(data)
 
 
 if __name__ == '__main__':
     color = _create_random_color()
-    generate('絵文\n字', color=color)
+    generate('絵文\n字。', 'emo.png', color=color)
     # upload_main(pathlib.Path('./emoji.png').resolve())
