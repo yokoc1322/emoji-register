@@ -58,7 +58,8 @@ def generate(
         f.write(data)
 
 
-if __name__ == '__main__':
+def register_emoji(text, name):
     color = _create_random_color()
-    generate('絵文\n字。', 'emo.png', color=color)
+    filename = name + '.png'
+    generate(text, filename, color=color)
     # upload_main(pathlib.Path('./emoji.png').resolve())
