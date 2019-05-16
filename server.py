@@ -19,9 +19,7 @@ def route():
     if not name_checker.match(emoji_name):
         abort(400)
 
-    register_emoji(emoji_text, emoji_name)
-
-    return "Hello"
+    return register_emoji(emoji_text, emoji_name)
 
 
 if __name__ == '__main__':

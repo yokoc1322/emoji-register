@@ -43,7 +43,7 @@ def _argparse(emoji_file):
         'cookie': os.getenv('SLACK_COOKIE'),
         'prefix': os.getenv('EMOJI_NAME_PREFIX', ''),
         'suffix': os.getenv('EMOJI_NAME_SUFFIX', ''),
-        'slackmoji_files': [emoji_file]
+        'slackmoji_files': emoji_file
     }
 
     if not args['team_name']:
@@ -73,30 +73,26 @@ def _fetch_api_token(session):
 
 def upload_main(emoji_file):
     # Rename main to use as module
-    main(emoji_file)
+    return main(emoji_file)
 
 
 def main(emoji_file):
     args = _argparse(emoji_file)
     session = _session(args)
     existing_emojis = get_current_emoji_list(session)
-    uploaded = 0
-    skipped = 0
-    for filename in args['slackmoji_files']:
-        print("Processing {}.".format(filename))
-        emoji_name = '{}{}{}'.format(
-            args['prefix'].strip(),
-            os.path.splitext(os.path.basename(filename))[0],
-            args['suffix'].strip()
-        )
-        if emoji_name in existing_emojis:
-            print("Skipping {}. Emoji already exists".format(emoji_name))
-            skipped += 1
-        else:
-            upload_emoji(session, emoji_name, filename)
-            print("{} upload complete.".format(filename))
-            uploaded += 1
-    print('\nUploaded {} emojis. ({} already existed)'.format(uploaded, skipped))
+    filename = args['slackmoji_files']
+
+    # print("Processing {}.".format(filename))
+    emoji_name = '{}{}{}'.format(
+        args['prefix'].strip(),
+        os.path.splitext(os.path.basename(filename))[0],
+        args['suffix'].strip()
+    )
+    if emoji_name in existing_emojis:
+        return "Not register, {} already exists.".format(emoji_name)
+    else:
+        upload_emoji(session, emoji_name, filename)
+        return "{} upload complete.".format(emoji_name)
 
 
 def get_current_emoji_list(session):
