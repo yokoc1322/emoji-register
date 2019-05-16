@@ -60,6 +60,6 @@ def generate(
 
 def register_emoji(text, name):
     color = _create_random_color()
-    filename = name + '.png'
+    filename = '/tmp/' + name + '.png'
     generate(text, filename, color=color)
     return upload_main(pathlib.Path(filename).resolve())
