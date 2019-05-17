@@ -1,0 +1,2 @@
+-i https://repo.fury.io/emoji-gen/
+emojilib
