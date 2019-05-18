@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 from flask import Flask, request, abort
 from emoji import register_emoji
 app = Flask(__name__)
@@ -23,7 +24,13 @@ def route():
 
 
 if __name__ == '__main__':
+    error_message = ''
     if not os.environ.get('SLACK_APP_TOKEN'):
-        print("Please set SLACK_APP_TOKEN to env val ")
-    else:
-        app.run(host='0.0.0.0', port=80)
+        error_message += "Please set SLACK_APP_TOKEN to env val.\n"
+    if not os.environ.get('PORT'):
+        error_message += "Please set PORT to env val.\n"
+    if len(error_message) > 0:
+        print(error_message)
+        sys.exit(1)
+
+    app.run(host='0.0.0.0', port=os.environ.get('PORT'))
