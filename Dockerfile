@@ -19,10 +19,12 @@ RUN set -x \
   libxi-dev \
   libxmu-dev \
   libxrender1 \
+  wget \
   unzip \
   && cd emoji-register \
   && pip install -r requirements-not-contain-emojilib.txt \
   && pip install -r requirements-emojilib.txt \
+  && sh scripts/init_font.sh \
   && rm -rf /tmp/* /var/tmp/* /root/.cache/* \
   && rm -rf /var/lib/apt/lists/*
 
