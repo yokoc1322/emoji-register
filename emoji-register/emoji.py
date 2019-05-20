@@ -7,18 +7,18 @@ _DEFAULT_FONT_FILE = 'fonts/NotoSansCJKjp-hinted/NotoSansCJKjp-Bold.otf'
 
 
 def _create_random_color():
-    COLOR_TABLE = ['FF', '88', '00']
-    TABLE_LENGTH = len(COLOR_TABLE)
-    RAND_MAX = 100
+    COLOR_MIN = 0
+    COLOR_MAX = 255
+    AVG_MAX = 200
 
     # 一定上の濃さになるまで回す
-    sum = 0
-    while sum < 1:
-        red = random.randrange(0, RAND_MAX) % TABLE_LENGTH
-        blue = random.randrange(0, RAND_MAX) % TABLE_LENGTH
-        green = random.randrange(0, RAND_MAX) % TABLE_LENGTH
-        sum = red + blue + green
-    return COLOR_TABLE[red] + COLOR_TABLE[blue] + COLOR_TABLE[green] + 'FF'
+    avg = COLOR_MAX
+    while avg > AVG_MAX:
+        red = random.randint(COLOR_MIN, COLOR_MAX)
+        blue = random.randint(COLOR_MIN, COLOR_MAX)
+        green = random.randint(COLOR_MIN, COLOR_MAX)
+        avg = (red + blue + green) / 3
+    return '%02X%02X%02XFF' % (red, blue, green)
 
 
 def generate(
