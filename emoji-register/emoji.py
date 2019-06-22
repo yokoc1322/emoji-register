@@ -2,6 +2,7 @@ from slack_emojinator.upload import upload_main
 import emojilib
 import pathlib
 import random
+import requests
 from functools import reduce
 
 _DEFAULT_FONT_FILE = "fonts/NotoSansCJKjp-hinted/NotoSansCJKjp-Bold.otf"
@@ -25,6 +26,23 @@ def _create_random_color():
 def _is_every_line_1_char(text):
     is_line_1_char = map(lambda x: len(x) == 1, text.split("\n"))
     return reduce(lambda x, acc: x and acc, is_line_1_char, True)
+
+
+def _download_image(url, dir, name):
+    response = requests.get(url)
+    content_type = response.headers["Content-Type"].split("/")
+
+    if content_type[0] != "image":
+        # TODO: 例外の型含め、エラー時の挙動を考える
+        raise ValueError("It's not image")
+    print(content_type)
+
+    filename = "%s.%s" % (name, content_type[1])
+    filepath = pathlib.Path(dir).joinpath(filename)
+    with open(filepath, "wb") as image_file:
+        image_file.write(response.content)
+
+    return filepath
 
 
 def generate(
@@ -65,8 +83,17 @@ def generate(
         f.write(data)
 
 
-def register_emoji(text, name):
+def register_moji(text, name):
     color = _create_random_color()
-    filename = "/tmp/" + name + ".png"
-    generate(text, filename, color=color)
-    return upload_main(pathlib.Path(filename).resolve())
+    filepath = "/tmp/" + name + ".png"
+    generate(text, filepath, color=color)
+    return upload_main(pathlib.Path(filepath).resolve())
+
+
+def register_emoji(url, name):
+    dir = "/tmp"
+    try:
+        filepath = _download_image(url, dir, name)
+    except ValueError:
+        return "It's not image"
+    return upload_main(filepath.resolve())

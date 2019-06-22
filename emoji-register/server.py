@@ -7,15 +7,34 @@ from multiprocessing import Process
 
 import requests
 from flask import Flask, request, abort
-from emoji import register_emoji
+from emoji import register_emoji, register_moji
 
 LOGGER_NAME = "emoji_register"
 
 app = Flask(__name__)
 
+RE_URL = re.compile(r"^(http|https)://([-\w]+\.)+[-\w]+(/[-+\w./?%&=]*)?$")
 
-def _register_emoji_with_delay_return(response_url, emoji_text, emoji_name):
-    return_text = register_emoji(emoji_text, emoji_name)
+
+def _is_text_url(text):
+    if RE_URL.match(text):
+        return True
+    return False
+
+
+def _register_moji_with_delay_return(response_url, emoji_text, emoji_name):
+    return_text = register_moji(emoji_text, emoji_name)
+    headers = {"content-type": "application/json"}
+    data = {"text": return_text}
+    r = requests.post(response_url, data=json.dumps(data), headers=headers)
+
+    logger = logging.getLogger(LOGGER_NAME + ".register")
+    logger.info(r.status_code)
+    logger.info(r.text)
+
+
+def _register_emoji_with_delay_return(response_url, emoji_url, emoji_name):
+    return_text = register_emoji(emoji_url, emoji_name)
     headers = {"content-type": "application/json"}
     data = {"text": return_text}
     r = requests.post(response_url, data=json.dumps(data), headers=headers)
@@ -26,24 +45,32 @@ def _register_emoji_with_delay_return(response_url, emoji_text, emoji_name):
 
 
 @app.route("/", methods=["POST"])
-def route():
+def root():
     if request.form["token"] != os.environ.get("SLACK_APP_TOKEN"):
         abort(403)
     args = request.form["text"].split()
     if len(args) < 2:
         abort(400)
-    emoji_text = re.sub("\\n", args[0], "\n")
-    emoji_name = args[1]
-    name_checker = re.compile(r"^[a-z0-9\-_]+$")
+    emoji_name = args[0]
+    url_or_text = args[1]
 
+    name_checker = re.compile(r"^[a-z0-9\-_]+$")
     if not name_checker.match(emoji_name):
         abort(400)
 
     response_url = request.form["response_url"]
-    p = Process(
-        target=_register_emoji_with_delay_return,
-        args=(response_url, emoji_text, emoji_name),
-    )
+    if _is_text_url(url_or_text):
+        emoji_url = url_or_text
+        p = Process(
+            target=_register_emoji_with_delay_return,
+            args=(response_url, emoji_url, emoji_name),
+        )
+    else:
+        emoji_text = re.sub("\\n", url_or_text, "\n")
+        p = Process(
+            target=_register_moji_with_delay_return,
+            args=(response_url, emoji_text, emoji_name),
+        )
     p.start()
     return "Registering %s ...." % emoji_name
 
