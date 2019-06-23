@@ -9,8 +9,8 @@ from multiprocessing import Process
 import requests
 from flask import Flask, request, abort
 
-from emoji import create_random_color, generate_moji, download_image
-from slack_emojinator.upload import upload_main
+import emoji
+import slack_emojinator.upload
 
 LOGGER_NAME = "emoji_register"
 IMAGE_DIR = "/tmp"
@@ -26,17 +26,18 @@ def _is_text_url(text):
 
 
 def _register_moji(response_url, text, name):
-    color = create_random_color()
+    color = emoji.create_random_color()
     filepath = "/tmp/" + name + ".png"
-    generate_moji(text, filepath, color=color)
-    # response_text = upload_main(pathlib.Path(filepath).resolve())
-    # _send_delayed_response(response_url, response_text)
+    emoji.generate_moji(text, filepath, color=color)
+    response_text = slack_emojinator.upload.upload_main(
+        pathlib.Path(filepath).resolve())
+    _send_delayed_response(response_url, response_text)
 
 
 def _register_emoji(response_url, image_url, name):
     try:
-        filepath = download_image(image_url, IMAGE_DIR, name)
-        response_text = upload_main(filepath.resolve())
+        filepath = emoji.download_image(image_url, IMAGE_DIR, name)
+        response_text = slack_emojinator.upload.upload_main(filepath.resolve())
     except ValueError:
         response_text = "Not image: " + image_url
     _send_delayed_response(response_url, response_text)
