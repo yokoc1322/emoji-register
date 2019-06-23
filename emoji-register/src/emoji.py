@@ -6,7 +6,9 @@ from functools import reduce
 
 _FILE_DIR = pathlib.Path(__file__).parent
 _DEFAULT_FONT_FILE = str(
-    _FILE_DIR.parent.joinpath("fonts/NotoSansCJKjp-hinted/NotoSansCJKjp-Bold.otf")
+    _FILE_DIR.parent.joinpath(
+        "fonts/NotoSansCJKjp-hinted/NotoSansCJKjp-Bold.otf"
+    )
 )
 
 
