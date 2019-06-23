@@ -60,8 +60,8 @@ def root():
     args = request.form["text"].split()
     if len(args) < 2:
         abort(400)
-    emoji_name = args[0]
-    url_or_text = args[1]
+    url_or_text = args[0]
+    emoji_name = args[1]
 
     name_checker = re.compile(r"^[a-z0-9\-_]+$")
     if not name_checker.match(emoji_name):
