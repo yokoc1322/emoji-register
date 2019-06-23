@@ -31,4 +31,4 @@ RUN set -x \
 WORKDIR emoji-register
 EXPOSE 80
 
-CMD ["python", "server.py"]
+CMD ["python", "src/server.py"]
