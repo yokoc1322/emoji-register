@@ -1,14 +1,16 @@
-from slack_emojinator.upload import upload_main
 import emojilib
 import pathlib
 import random
 import requests
 from functools import reduce
 
-_DEFAULT_FONT_FILE = "fonts/NotoSansCJKjp-hinted/NotoSansCJKjp-Bold.otf"
+_FILE_DIR = pathlib.Path(__file__).parent
+_DEFAULT_FONT_FILE = str(
+    _FILE_DIR.parent.joinpath("fonts/NotoSansCJKjp-hinted/NotoSansCJKjp-Bold.otf")
+)
 
 
-def _create_random_color():
+def create_random_color():
     COLOR_MIN = 0
     COLOR_MAX = 255
     AVG_MAX = 200
@@ -28,7 +30,7 @@ def _is_every_line_1_char(text):
     return reduce(lambda x, acc: x and acc, is_line_1_char, True)
 
 
-def _download_image(url, dir, name):
+def download_image(url, dir, name):
     response = requests.get(url)
     content_type = response.headers["Content-Type"].split("/")
 
@@ -45,7 +47,7 @@ def _download_image(url, dir, name):
     return filepath
 
 
-def generate(
+def generate_moji(
     text,
     filename,
     typeface_file=_DEFAULT_FONT_FILE,
@@ -57,6 +59,8 @@ def generate(
     size_fixed=None,
     disable_stretch=None,
 ):
+    if pathlib.Path(typeface_file).exists() is False:
+        raise ValueError("font file not found: " + typeface_file)
     generate_options = {}
     if color:
         generate_options["color"] = color
@@ -81,19 +85,3 @@ def generate(
 
     with open(filename, "wb") as f:
         f.write(data)
-
-
-def register_moji(text, name):
-    color = _create_random_color()
-    filepath = "/tmp/" + name + ".png"
-    generate(text, filepath, color=color)
-    return upload_main(pathlib.Path(filepath).resolve())
-
-
-def register_emoji(url, name):
-    dir = "/tmp"
-    try:
-        filepath = _download_image(url, dir, name)
-    except ValueError:
-        return "It's not image"
-    return upload_main(filepath.resolve())
