@@ -39,7 +39,6 @@ def download_image(url, dir, name):
     if content_type[0] != "image":
         # TODO: 例外の型含め、エラー時の挙動を考える
         raise ValueError("It's not image")
-    print(content_type)
 
     filename = "%s.%s" % (name, content_type[1])
     filepath = pathlib.Path(dir).joinpath(filename)
