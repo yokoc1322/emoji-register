@@ -1,8 +1,10 @@
-import emojilib
+import logging
 import pathlib
 import random
-import requests
 from functools import reduce
+
+import emojilib
+import requests
 
 _FILE_DIR = pathlib.Path(__file__).parent
 _DEFAULT_FONT_FILE = str(
@@ -10,6 +12,11 @@ _DEFAULT_FONT_FILE = str(
         "fonts/NotoSansCJKjp-hinted/NotoSansCJKjp-Bold.otf"
     )
 )
+
+LOGGER_NAME = "emoji_register.emoji"
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(LOGGER_NAME)
 
 
 def create_random_color():
@@ -86,3 +93,4 @@ def generate_moji(
 
     with open(filename, "wb") as f:
         f.write(data)
+    logger.info('Generated Moji: {}'.format(filename))

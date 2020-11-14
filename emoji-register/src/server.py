@@ -1,22 +1,25 @@
-import os
-import re
-import sys
 import json
 import logging
+import os
 import pathlib
+import re
+import sys
 from multiprocessing import Process
 
 import requests
-from flask import Flask, request, abort
+from flask import Flask, abort, request
 
 import emoji
 import slack_emojinator.upload
 
-LOGGER_NAME = "emoji_register"
+LOGGER_NAME = "emoji_register.server"
 IMAGE_DIR = "/tmp"
 RE_URL = re.compile(r"^(http|https)://([-\w]+\.)+[-\w]+(/[-+\w./?%&=]*)?$")
 
 app = Flask(__name__)
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(LOGGER_NAME)
 
 
 def _is_text_url(text):
@@ -26,31 +29,34 @@ def _is_text_url(text):
 
 
 def _register_moji(response_url, text, name):
+    logger.info("Recieve: {}: {}".format(text, name))
+
     color = emoji.create_random_color()
     filepath = "/tmp/" + name + ".png"
     emoji.generate_moji(text, filepath, color=color)
     response_text = slack_emojinator.upload.upload_main(
         pathlib.Path(filepath).resolve())
     _send_delayed_response(response_url, response_text)
+    logger.info('Finish: {}'.format(name))
 
 
 def _register_emoji(response_url, image_url, name):
+    logger.info("Recieve: {}: {}".format(image_url, name))
+
     try:
         filepath = emoji.download_image(image_url, IMAGE_DIR, name)
         response_text = slack_emojinator.upload.upload_main(filepath.resolve())
     except ValueError:
         response_text = "Not image: " + image_url
     _send_delayed_response(response_url, response_text)
+    logger.info('Finish: {}'.format(name))
 
 
 def _send_delayed_response(url, text):
+    logger.info('Send delayed Response: {}'.format(text))
     headers = {"content-type": "application/json"}
     data = {"text": text}
     r = requests.post(url, data=json.dumps(data), headers=headers)
-
-    logger = logging.getLogger(LOGGER_NAME + ".register")
-    logger.info(r.status_code)
-    logger.info(r.text)
 
 
 @app.route("/", methods=["POST"])
@@ -93,9 +99,6 @@ def root():
 
 
 if __name__ == "__main__":
-    logging.basicConfig()
-    logger = logging.getLogger(LOGGER_NAME)
-
     error_messages = []
     if not os.environ.get("SLACK_APP_TOKEN"):
         error_messages.append("Please set SLACK_APP_TOKEN to env val.")

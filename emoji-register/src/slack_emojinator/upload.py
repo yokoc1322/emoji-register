@@ -6,10 +6,11 @@
 from __future__ import print_function
 
 import argparse
+import logging
 import os
 import re
-import requests
 
+import requests
 from bs4 import BeautifulSoup
 
 try:
@@ -23,6 +24,11 @@ URL_LIST = "https://{team_name}.slack.com/api/emoji.adminList"
 
 API_TOKEN_REGEX = r"\"api_token\":\"(.*?)\","
 API_TOKEN_PATTERN = re.compile(API_TOKEN_REGEX)
+
+
+LOGGER_NAME = "emoji_register.upload"
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(LOGGER_NAME)
 
 
 def _session(args):
@@ -72,8 +78,10 @@ def _fetch_api_token(session):
 
 
 def upload_main(emoji_file):
-    # Rename main to use as module
-    return main(emoji_file)
+    logger.info('Start upload')
+    ret = main(emoji_file)
+    logger.info('Finish upload')
+    return ret
 
 
 def main(emoji_file):
