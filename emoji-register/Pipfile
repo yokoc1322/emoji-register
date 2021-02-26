@@ -12,7 +12,7 @@ emojilib = "*"
 beautifulsoup4 = "<5.0,>=4.4"
 requests = "<3.0,>=2.20.0"
 lxml = "==3.7.3"
-aiohttp = "==2.3.1"
+aiohttp = "==3.7.4"
 flask = "*"
 
 [requires]
