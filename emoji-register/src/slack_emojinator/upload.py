@@ -116,6 +116,7 @@ def get_current_emoji_list(session):
         r = session.post(session.url_list, data=data)
         r.raise_for_status()
         response_json = r.json()
+        logger.info(response_json)
 
         result.extend(map(lambda e: e["name"], response_json["emoji"]))
         if page >= response_json["paging"]["pages"]:
