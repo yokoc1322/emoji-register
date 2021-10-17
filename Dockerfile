@@ -1,4 +1,4 @@
-FROM python:3.7-slim
+FROM python:3.7-slim AS emoji-register-prod
 
 WORKDIR /workspace
 
@@ -32,3 +32,11 @@ WORKDIR emoji-register
 EXPOSE 80
 
 CMD ["python", "src/server.py"]
+
+FROM emoji-register-prod AS emoji-register-dev
+
+RUN set -x \
+  && pip install -r requirements-dev.txt
+
+CMD ["/bin/bash"]
+

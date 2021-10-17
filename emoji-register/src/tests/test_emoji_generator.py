@@ -1,12 +1,9 @@
 import os
-import sys
 import re
 from pathlib import Path
+
 import pytest
-
-sys.path.append(str(Path(__file__).parents[1] / "src"))
-
-import emoji
+from emoji_generator import create_random_color, download_image, generate_moji
 
 IMAGE_FILE_NAME = "image"
 IMAGE_FILE_DIR = "/tmp"
@@ -23,17 +20,17 @@ def delete_image_file():
 
 
 def test_create_random_color():
-    color_code = emoji.create_random_color()
+    color_code = create_random_color()
     assert re.match(r"[0-9A-F]{6}FF", color_code) is not None
 
 
 def test_generate_moji(delete_image_file):
     text = "麗"
-    emoji.generate_moji(text, IMAGE_FILE_PATH)
+    generate_moji(text, IMAGE_FILE_PATH)
     assert Path(IMAGE_FILE_PATH).exists()
 
 
 def test_download_image(delete_image_file):
     url = "https://emojis.slackmojis.com/emojis/images/1450319441/51/facepalm.png?1450319441"
-    emoji.download_image(url, IMAGE_FILE_DIR, IMAGE_FILE_NAME)
+    download_image(url, IMAGE_FILE_DIR, IMAGE_FILE_NAME)
     assert Path(IMAGE_FILE_PATH).exists()

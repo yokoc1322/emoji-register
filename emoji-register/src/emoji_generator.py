@@ -6,6 +6,8 @@ from functools import reduce
 import emojilib
 import requests
 
+from logger import get_logger
+
 _FILE_DIR = pathlib.Path(__file__).parent
 _DEFAULT_FONT_FILE = str(
     _FILE_DIR.parent.joinpath(
@@ -13,10 +15,7 @@ _DEFAULT_FONT_FILE = str(
     )
 )
 
-LOGGER_NAME = "emoji_register.emoji"
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(LOGGER_NAME)
+logger = get_logger()
 
 
 def create_random_color():
@@ -26,6 +25,7 @@ def create_random_color():
 
     # 一定上の濃さになるまで回す
     avg = COLOR_MAX
+    red = blue = green = 0
     while avg > AVG_MAX:
         red = random.randint(COLOR_MIN, COLOR_MAX)
         blue = random.randint(COLOR_MIN, COLOR_MAX)

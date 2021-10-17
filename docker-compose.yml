@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  server:
+    image: emoji-register-local
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    tty: true
+    stdin_open: true
+    env_file:
+      - './secrets/secret.env'
+    environment:
+      # see env file
+      # SLACK_COOKIE: secret
+      # SLACK_APP_TOKEN: secret
+      # SLACK_TEAM: secret
+      PORT: 80
+      FLASK_ENV: development
+      PYTHONPATH: /workspace/emoji-register/src
+    volumes:
+      - './emoji-register:/workspace/emoji-register'
+    ports:
+      - "8080:80"

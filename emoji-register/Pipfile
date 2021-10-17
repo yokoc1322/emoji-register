@@ -6,9 +6,11 @@ verify_ssl = true
 [dev-packages]
 pylint = "*"
 autopep8 = "*"
+pytest = "*"
+mypy = "*"
+flake8 = "*"
 
 [packages]
-emojilib = "*"
 beautifulsoup4 = "<5.0,>=4.4"
 requests = "<3.0,>=2.20.0"
 lxml = "==3.7.3"

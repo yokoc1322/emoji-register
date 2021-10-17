@@ -108,3 +108,5 @@ venv.bak/
 !**/fonts/.gitkeep
 .vscode/**
 *.png
+
+secrets/*
